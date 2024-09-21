@@ -23,15 +23,11 @@ def my_handler(sender, instance, **kwargs):
     
 # # Creating a new user will trigger the signal
 try:
+# Creating a user and observing the thread
+    print(f"Main thread: {threading.current_thread().name}")
+    User.objects.create(username='test_user')
     User.objects.create(username='test_user')
 except Exception as e:
     print("Error creating user:", str(e))
 print("After User creation.")
 
-
-
-
-
-# Creating a user and observing the thread
-# print(f"Main thread: {threading.current_thread().name}")
-# User.objects.create(username='test_user')
