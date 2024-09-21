@@ -4,6 +4,8 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 import time
 import threading
+from django.db import transaction
+
 
 
 
@@ -27,7 +29,31 @@ try:
     print(f"Main thread: {threading.current_thread().name}")
     User.objects.create(username='test_user')
     User.objects.create(username='test_user')
+    # 3.running in same db  transaction and the transaction is rolled back, the signal will not be processed.
+    with transaction.atomic():
+        User.objects.create(username='test_user')
+        raise Exception("Forcing rollback")
 except Exception as e:
     print("Error creating user:", str(e))
 print("After User creation.")
+print("After transaction block.")
 
+
+# 4.   An instance of the Rectangle class requires length:int and width:int to be initialized.
+# We can iterate over an instance of the Rectangle class.
+# When an instance is iterated over, we first get its length in the format: {'length': <VALUE_OF_LENGTH>} followed by the width {'width': <VALUE_OF_WIDTH>}.
+
+
+class Rectangle:
+    def __init__(self, length: int, width: int):
+        self.length = length
+        self.width = width
+
+    def __iter__(self):
+        yield {'length': self.length}
+        yield {'width': self.width}
+
+# Example usage:
+rect = Rectangle(5, 3)
+for attribute in rect:
+    print(attribute)
